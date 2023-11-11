@@ -75,6 +75,15 @@
 
 ---
 
+### service
+
+---
+
+### PreviewService
+
+---
+
+---
 ### view
 
 ---
@@ -159,7 +168,25 @@
 - description
   - 에러 메시지를 받아서 ERROR_PREFIX에 담아 출력하는 메소드
 
+---
+### controller
 
+---
+#### PreviewController
+
+---
+##### 필드
+
+- PreviewService
+- InputView
+  - 입력을 받아오기 위한 UI
+- OutputView
+  - 출력을 하기 위한 UI
+
+##### 메서드
+
+
+---
 ### validator
 
 ---
@@ -169,19 +196,18 @@
 
 ##### 메서드
 
-각 요구사항에 맞는지 검증하는 메서드
-- signature : `public static <T, R> R validate(Supplier<T> inputSupplier, Function<T, R> inputMapper, Consumer<String> errorHandler`
-- error
-  - `NumberFormatException` : 날짜, 메뉴 주문량이 숫자가 아닐 경우
-  - `DateTimeException` : 날짜가 해당 달의 범위를 벗어날 경우
-  - `IllegalArgumentException`
-    - 메뉴판에 없는 메뉴를 입력하는 경우
-    - 메뉴의 개수가 1개 미만일 경우
-    - 메뉴 형식이 예시와 다른 경우
-    - 메뉴가 중복인 경우
-- return
-  - function
-
+- 각 요구사항에 맞는지 검증하는 메서드
+  - signature : `public static <T, R> R validate(Supplier<T> inputSupplier, Function<T, R> inputMapper, Consumer<String> errorHandler`
+  - error
+    - `NumberFormatException` : 날짜, 메뉴 주문량이 숫자가 아닐 경우
+    - `DateTimeException` : 날짜가 해당 달의 범위를 벗어날 경우
+    - `IllegalArgumentException`
+      - 메뉴판에 없는 메뉴를 입력하는 경우
+      - 메뉴의 개수가 1개 미만일 경우
+      - 메뉴 형식이 예시와 다른 경우
+      - 메뉴가 중복인 경우
+  - return
+    - function에 의해 정제된 R 값
 
 ---
 ### constant
