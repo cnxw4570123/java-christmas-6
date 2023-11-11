@@ -81,15 +81,13 @@
 ---
 ##### 상수
 
-- thisMonth
-  - 12
 - GREETING_MENT
   - "안녕하세요! 우테코 식당 %d월 이벤트 플래너입니다.\n"
 - INPUT_VISIT_DAY_MESSAGE
   - "%d 중 식당 예상 방문 날짜는 언제인가요? (숫자만 입력해 주세요!)\n"
 - INPUT_ORDER_MESSAGE
+
   - "주문하실 메뉴를 메뉴와 개수를 알려주세요. (e.g. 해산물파스타-2, 레드와인-1, 초코케이크-1)\n"
-  
 ##### 메서드
 
 - 환영인사를 출력해주는 메소드
@@ -134,6 +132,9 @@
 - EVENT_BADGE
   - "<12월 이벤트 배지>"
 
+- ERROR_PREFIX
+  - "[ERROR] %s\n"
+
 ##### 메서드
 
 - 주문 메뉴들을 출력하는 메서드
@@ -149,3 +150,32 @@
 - 할인 후 예상 결제 금액을 출력하는 메서드
 
 - 이벤트 배지를 출력하는 메서드
+
+- 에러를 출력하는 메서드
+- signature : `public void printErrorMsg(String errorMsg)`
+- description
+  - 에러 메시지를 받아서 ERROR_PREFIX에 담아 출력하는 메소드
+
+
+### validator
+
+#### InputValidator
+
+
+### constant
+
+---
+
+#### Info
+
+##### 상수
+
+- `int`
+- THIS_YEAR : 2023
+- THIS_MONTH : 12
+
+- `String`
+- ERROR_MSG_INVALID_DATE
+  - "유효하지 않은 날짜입니다. 다시 입력해주세요."
+- ERROR_MSG_INVALID_ORDER 
+  - "유효하지 않은 주문입니다. 다시 입력해주세요."
