@@ -22,6 +22,7 @@
 - 메뉴 이름
 - 메뉴 가격
 
+---
 
 #### enum MenuGroup
 메뉴 종류에 따라 다른 메뉴를 가짐
@@ -39,6 +40,7 @@
 - 메뉴 그룹 이름
 - 각 그룹에 포함된 메뉴들
 
+---
 
 #### enum Badge
 
@@ -71,6 +73,7 @@
   - 순회 중 `filter`로 해당 금액이상인지 체크한다.
   - 체크 후 조건에 해당하면 현재 뱃지 반환 없으면 다음 뱃지로 이동
 
+---
 
 ### view
 
@@ -159,15 +162,35 @@
 
 ### validator
 
-#### InputValidator
+---
+#### Validator
+
+---
+
+##### 메서드
+
+각 요구사항에 맞는지 검증하는 메서드
+- signature : `public static <T, R> R validate(Supplier<T> inputSupplier, Function<T, R> inputMapper, Consumer<String> errorHandler`
+- error
+  - `NumberFormatException` : 날짜, 메뉴 주문량이 숫자가 아닐 경우
+  - `DateTimeException` : 날짜가 해당 달의 범위를 벗어날 경우
+  - `IllegalArgumentException`
+    - 메뉴판에 없는 메뉴를 입력하는 경우
+    - 메뉴의 개수가 1개 미만일 경우
+    - 메뉴 형식이 예시와 다른 경우
+    - 메뉴가 중복인 경우
+- return
+  - function
 
 
+---
 ### constant
 
 ---
 
 #### Info
 
+---
 ##### 상수
 
 - `int`
