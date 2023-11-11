@@ -70,3 +70,82 @@
   - 혜택 금액을 확인하고 `Arrays.stream(Badge.values())`으로 각 뱃지마다 순회
   - 순회 중 `filter`로 해당 금액이상인지 체크한다.
   - 체크 후 조건에 해당하면 현재 뱃지 반환 없으면 다음 뱃지로 이동
+
+
+### view
+
+---
+
+#### InputView
+
+---
+##### 상수
+
+- thisMonth
+  - 12
+- GREETING_MENT
+  - "안녕하세요! 우테코 식당 %d월 이벤트 플래너입니다.\n"
+- INPUT_VISIT_DAY_MESSAGE
+  - "%d 중 식당 예상 방문 날짜는 언제인가요? (숫자만 입력해 주세요!)\n"
+- INPUT_ORDER_MESSAGE
+  - "주문하실 메뉴를 메뉴와 개수를 알려주세요. (e.g. 해산물파스타-2, 레드와인-1, 초코케이크-1)\n"
+  
+##### 메서드
+
+- 환영인사를 출력해주는 메소드
+  - signature : `public void printGreetingMent()`
+  -  description
+    - 내부 필드 thisMonth를 사용해 `System.out.printf`에 GREETING_MENT를 출력하는 메소드
+
+- 방문 날짜를 입력받는 메소드
+  - signature : `public String inputVisitDate()`
+  - description
+    - INPUT_VISIT_DAY_MESSAGE에 thisMonth를 넣어 출력한다.
+    - `Console.readLine`메소드를 통해 입력받은 문자열을 반환한다.
+
+- 메뉴와 개수를 입력받는 메소드
+  - signature : `public String inputOrders()`
+  - description
+    - INPUT_ORDER_MESSAGE에 thisMonth를 넣어 출력한다.
+    - `Console.readLine`메소드를 통해 입력받은 문자열을 반환한다.
+
+---
+
+#### OutputView
+
+---
+##### 필드
+
+- PREVIEW_START_MESSAGE
+  - "%d월 %d일에 우테코 식당에서 받을 이벤트 혜택 미리보기!"
+
+- ORDER_MENU
+  - "<주문 메뉴>"
+- BEFORE_DISCOUNT
+  - "<할인 전 총주문 금액>"
+- GIFT_MENU
+  - "<증정 메뉴>"
+- DISCOUNT_DETAILS
+  - "<혜택 내역>"
+- TOTAL_DISCOUNT
+  - "<총혜택 금액>"
+- EXPECT_PAYMENT
+  - "<할인 후 예상 결제 금액>"
+- EVENT_BADGE
+  - "<12월 이벤트 배지>"
+
+##### 메서드
+
+- 주문 메뉴들을 출력하는 메서드
+
+- 할인 전 총 주문 금액을 출력하는 메서드
+
+- 증정 메뉴를 출력하는 메서드
+
+- 혜택 내역을 출력하는 메서드
+
+- 총 혜택 금액을 출력하는 메서드
+
+- 할인 후 예상 결제 금액을 출력하는 메서드
+
+- 이벤트 배지를 출력하는 메서드
