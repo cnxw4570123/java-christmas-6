@@ -22,6 +22,22 @@
 - 메뉴 이름
 - 메뉴 가격
 
+##### 메서드
+
+- 메뉴 이름을 반환하는 메서드
+  - signature : `public String getMenuName()`
+  - return
+    - String : 메뉴 이름
+  - description
+    - 현재 메뉴 이름을 반환하는 메서드
+
+- 메뉴 가격을 반환하는 메서드
+  - signature : `public int getMenuPrice()`
+  - return
+    - int : 메뉴 가격
+  - description
+    - 현재 메뉴의 가격을 반환하는 메서드
+
 ---
 
 #### enum MenuGroup
@@ -39,6 +55,17 @@
 
 - 메뉴 그룹 이름
 - 각 그룹에 포함된 메뉴들
+
+##### 메서드
+
+- 메뉴 이름을 통해 메뉴 그룹을 찾는 메소드
+- signature : `public MenuGroup checkMenuGroup(Menu menu)`
+- return
+  - MenuGroup : 해당 메뉴가 속하는 MenuGroup
+- description
+  - 메뉴 그룹을 돌면서 해당 메뉴 그룹에 전달받은 메뉴가 있는지 확인한다.
+  - 해당 메뉴가 속한 그룹을 반환한다.
+
 
 ---
 
