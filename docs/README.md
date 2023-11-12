@@ -75,6 +75,119 @@
 
 ---
 
+#### Event `interface`
+
+---
+
+##### 메서드
+
+- 혜택을 계산해주는 메서드
+- `public Event caculateBenefit(Map<Menu, Integer> order, LocalDate date)`
+- description
+  - 날짜와 주문 목록을 받아 혜택을 계산해준다.
+
+---
+
+#### Discount
+
+---
+Event 인터페이스의 구현체
+---
+
+##### 필드
+
+- D_DAY 
+  - 크리스마스 당일
+- START_DAY
+  - 이벤트 시작인 1일
+- START_DAY_DISCOUNT
+  - 1000원 부터 시작 
+- D_DAY_VARIABLE_DISCOUNT
+  - 100원부터 시작해서 26일 이전 방문날까지 100원씩 증가한다.
+- DAY_DISCOUNT
+  - 평일에는 디저트 2023원 할인, 주말에는 메인메뉴 2023원 할인
+- SPECIAL_DISCOUNT
+  - 별이 있는 날에는 1000원 할인 
+- WEEKEND
+  - 금요일과 토요일
+- WEEKDAY_DISCOUNT_MSG
+  - "평일 할인"
+- WEEKEND_DISCOUNT_MSG
+  - "주말 할인"
+- SPECIAL_DISCOUNT_MSG
+  - "특별 할인";
+- CHRISTMAS_D_DAY_DISCOUNT_MSG
+  - "크리스마스 디데이 할인"
+- name
+  - 할인 명목을 담을 필드
+- discountAmount
+  - 할인 금액을 담을 필드
+
+##### 메서드
+
+- 평일 할인 객체를 반환하는 메서드
+- signature :`public Discount getWeekDayDiscount(int count)`
+- return
+  - 새 Discount 객체
+- description
+  - 이름이 평일 할인이고 디저트 메뉴 * 2023의 할인금액을 갖는 새 Discount 객체 반환
+
+- 주말 할인 객체를 반환하는 메서드
+- signature : `public Discount getWeekendDiscount(int count)` 
+- return
+  - 새 Discount 객체
+- description
+  - 이름이 주말 할인이고 메인 메뉴 * 2023의 할인금액을 갖는 새 Discount 객체 반환
+
+- 스페셜 할인 객체를 반환하는 메서드
+- signature : `public Discount getSpecialDiscount()`
+- return
+  - 새 Discount 객체
+- description
+  - 이름이 특별 할인이고 1000원의 할인금액을 갖는 새 Discount 객체 반환
+
+- 디데이 할인 객체를 반환하는 메서드
+- signature : `public Discount getChristmasDiscount(LocalDate date)`
+- return
+- 새 Discount 객체
+- description
+  - 이름이 크리스마스 디데이 할인이고 1000원 + 날짜 * 100의 할인금액을 갖는 새 Discount 객체 반환
+
+---
+
+#### Gift
+
+---
+
+Event의 구현체
+
+---
+
+##### 필드
+
+- TERMS_OF_GIFT
+  -12만원 이상일 경우 증정품 증정 
+
+- MENU
+  - 증정품으로 줄 메뉴
+
+##### 메서드
+
+- 샴페인을 생성하는 메서드
+- signature : `public Gift getChampagne()`
+- return
+  - 샴페인을 담은 Gift 객체 반환
+
+- 혜택을 계산해주는 메서드
+- signature : `public Event caculateBenefit(Map<Menu, Integer> order, LocalDate date)`
+- return
+  - 샴페인 Gift 객체
+  - null
+- description
+  - order의 금액을 모두 합쳐 총 금액이 12만원 이상이면 샴페인을 증정한다.
+  - 그렇지 못할 경우 null을 반환한다.
+
+
 ### service
 
 ---
