@@ -1,11 +1,13 @@
 package christmas.domain;
 
 import christmas.constant.Info;
+import java.text.DecimalFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class Discount implements Event {
     private static final LocalDate D_DAY = LocalDate.of(Info.THIS_YEAR, Info.THIS_MONTH, 25);
@@ -22,6 +24,8 @@ public class Discount implements Event {
     private static final String CHRISTMAS_D_DAY_DISCOUNT_MSG = "크리스마스 디데이 할인";
     private final String name;
     private final int discountAmount;
+
+    private DecimalFormat decimalFormat = new DecimalFormat(": -#,###원");
 
 
     private Discount(String name, int discountAmount) {
@@ -48,8 +52,12 @@ public class Discount implements Event {
     }
 
     @Override
-    public Discount caculateBenefit(Map<Menu, Integer> userOrders, LocalDate date) {
-       return null;
+    public Optional<Event> caculateBenefit(Map<Menu, Integer> userOrders, LocalDate date) {
+        return Optional.empty();
     }
 
+    @Override
+    public String showBenefitDetail() {
+        return name + decimalFormat.format(discountAmount);
+    }
 }
