@@ -79,9 +79,19 @@
 
 ---
 
-### PreviewService
+#### PreviewService
 
 ---
+
+##### 메서드
+
+- 정수를 입력받아 날짜로 변환하는 메서드
+  - signature : `public LocalDate parseInputToVisitDate(int visitDay)`
+  - error
+    - DateTimeException
+      - 해당 달의 날짜 범위에 해당하지 않으면 발생 (ex. 12월 0일, 2월 29일)
+  - return
+    - LocalDate의 정적 메소드 `of()`를 활용해 2023년 12월 visitDay일을 반환한다.
 
 ---
 ### view
@@ -185,6 +195,14 @@
 
 ##### 메서드
 
+- 입력 받은 방문일을 LocalDate로 만들어주는 메서드
+  - signature : `public LocalDate getVisitDate()`
+  - return
+    - LocalDate : 입력받은 정수를 `previewService.parseInputToVisitDate()`로 가공한 날짜
+  - description
+    - Validator의 `Supplier`을 `Integer` 타입으로 지정 `inputView.inputVisitDate()`를 매핑한다.
+    - Function 역시 Integer를 받아 LocalDate를 반환하는 parseInputToVisitDate메소드를 매핑한다.
+    - `Validator.validate()`메서드를 이용해 날짜로 변환한다.
 
 ---
 ### validator
