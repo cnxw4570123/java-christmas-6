@@ -1,5 +1,6 @@
 package christmas.domain;
 
+import java.util.Arrays;
 import java.util.List;
 
 public enum MenuGroup {
@@ -13,5 +14,12 @@ public enum MenuGroup {
     MenuGroup(String groupName, List<Menu> menus) {
         GroupName = groupName;
         this.menus = menus;
+    }
+
+    public static MenuGroup checkMenuGroup(Menu menu){
+        return Arrays.stream(MenuGroup.values())
+                .filter(menuGroup -> menuGroup.menus.contains(menu))
+                .findFirst()
+                .get();
     }
 }
