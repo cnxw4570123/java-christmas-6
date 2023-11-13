@@ -370,9 +370,18 @@ Event<Integer, Optional<Event>>의 구현체
     - LocalDate의 정적 메소드 `of()`를 활용해 2023년 12월 visitDay일을 반환한다.
 
 - 문자열 주문을 입력 받아 `Order`객체로 변환하는 메서드
+  - signature : `public Order parseInputToOrder(String input)`
+  - return
+    - Order
+      - 새 `Order` 객체를 반환한다.
 
+- Order를 받아서 적용된 혜택들의 리스트를 반환받는 메소드
 
+- Order를 통해 총 주문 금액을 계산하는 메소드
 
+- Order를 카테고리 별 주문 개수로 바꾸는 메소드
+
+  
 ---
 ### view
 
@@ -484,6 +493,10 @@ Event<Integer, Optional<Event>>의 구현체
     - Function 역시 Integer를 받아 LocalDate를 반환하는 parseInputToVisitDate메소드를 매핑한다.
     - `Validator.validate()`메서드를 이용해 날짜로 변환한다.
 
+- 입력 받은 주문을 Order로 만들어주는 메서드
+  - signature : `public Order getOrder()`
+  - return
+    - Order : 입력받은 문자열을 `previewService.parseInputToOrder()`로 변환한 객체
 ---
 ### validator
 
