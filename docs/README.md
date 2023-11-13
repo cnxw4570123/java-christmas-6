@@ -249,10 +249,29 @@ Event<Integer, Optional<Event>>의 구현체
 
 ##### 필드
 
-- 주문
+- 상세
   - 메뉴와 개수를 가지는 `Map`객체
 
 ##### 메서드
+
+- 생성자 메소드
+- signature : `public Order(String input)`
+- error
+  - `IllegalArgumentException`
+    - 메뉴 형식이 안맞을 경우
+    - 메뉴 개수의 총 합이 20을 초과할 경우
+    - 메뉴가 없는 경우
+- return
+  - Order : 검증 완료 시 새로운 객체 생성
+- description
+  - 문자열을 받아 정규 표현식에 맞는지 확인하고 일치하지 않을 경우 `IllegalArgumentException`을 발생시킨다.
+  - 일치할 경우 ","기준으로 문자열들을 나눈다.
+  - 만약 개수가 0개면 `IllegalArgumentException`을 발생시킨다.
+  - 나눈 문자열을 다시 "-"로 나누고 메뉴와 개수를 가지는 `MapEntry`객체로 바꾼다.
+  - `Set`을 이용해 메뉴가 중복 될 경우 `IllegalArgumentException`을 발생시킨다.
+  - 이를 `Collections.toMap()`으로 맵 객체로 바꾼다.
+  - 바꾼 이후 Map객체의 value 더해 20이상이면 `IllegalArgumentException`을 발생시킨다.
+  - Set에 있는 메뉴들 기반으로 DESSERT, APPETIZER, MAIN_DISH 중 하나라도 없는 경우 오류를 발생시킨다.
 
 - 주문을 카테고리 별 개수로 바꿔주는 메소드
   - signature : `public Map<MenuGroup, Integer> toCountByMenuGroup()`
