@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.*;
 import christmas.constant.Info;
 import christmas.controller.PreviewController;
 import christmas.domain.Badge;
-import christmas.domain.Menu;
-import christmas.domain.MenuGroup;
 import christmas.domain.Order;
 import christmas.service.PreviewService;
 import christmas.validator.Validator;
@@ -16,8 +14,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,7 +25,6 @@ import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -99,46 +94,30 @@ public class OwnTest {
 
     }
 
-    @Test
-    void 올바른_카테고리별_메뉴_개수_계산() {
-        // given
-        Map<Menu, Integer> order = new HashMap<>();
-        order.put(Menu.BARBECUE_RIB, 2);
-        order.put(Menu.CHOCOLATE_CAKE, 1);
-        order.put(Menu.RED_WINE, 1);
-        order.put(Menu.T_BONE_STEAK, 10);
-        Order order1 = new Order(order);
 
-        // when
-        Map<MenuGroup, Integer> countByMenuGroup = order1.toCountByMenuGroup();
-
-        // then
-        assertThat(countByMenuGroup)
-                .contains(
-                        Map.entry(MenuGroup.MAIN_DISH, 12),
-                        Map.entry(MenuGroup.DESSERT, 1),
-                        Map.entry(MenuGroup.DRINK, 1)
-                );
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "제로콜라-1,레드와인-1,샴페인-1",
+            "양송이수프-10,초코케이크-5,크리스마스파스타-6",
+            "바베큐립-1,폭립-1,아이스크림-10",
+            "아이스크림-0",
+            "티본스테이크-1,양송이수프-1,양송이수프-1"})
+    void 주문을_바르게_해주세요(String orderDetail) {
+        assertThatThrownBy(() -> Order.fromDetails(orderDetail))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @Test
-    void 메뉴에_해당하는_메뉴그룹이_틀립니다(){
-        // given
-        Map<Menu, Integer> order = new HashMap<>();
-        order.put(Menu.BARBECUE_RIB, 2);
-        Order order1 = new Order(order);
+    @ParameterizedTest
+    @CsvSource(value = {
+            "양송이수프-10,초코케이크-5,크리스마스파스타-5:260000",
+            "아이스크림-1:5000",
+            "티본스테이크-1,양송이수프-1:61000",
+            "제로콜라-1,레드와인-1,바비큐립-1:117000"
+            }, delimiter = ':')
+    void 올바른_주문의_총_가격을_계산합니다(String orderDetail, int totalPrice){
+        Order order = Order.fromDetails(orderDetail);
 
-        // when
-        Map<MenuGroup, Integer> countByMenuGroup = order1.toCountByMenuGroup();
+        Assertions.assertEquals(totalPrice,order.calculateTotalPrice());
 
-        // then
-        assertThat(countByMenuGroup)
-                .doesNotContain(
-                        Map.entry(MenuGroup.APPETIZER, 2),
-                        Map.entry(MenuGroup.DESSERT, 1),
-                        Map.entry(MenuGroup.DRINK, 1)
-                );
     }
-
-
 }
