@@ -1,10 +1,9 @@
 package christmas.domain;
 
 import java.time.LocalDate;
-import java.util.Map;
 import java.util.Optional;
 
-public class Gift implements Event {
+public class Gift implements Event<Integer, Optional<Event>> {
     private static final int TERMS_OF_GIFT = 120_000;
     private static final String GIFT_MESSAGE = "%d개";
 
@@ -20,11 +19,8 @@ public class Gift implements Event {
     }
 
     @Override
-    public Optional<Event> caculateBenefit(Map<Menu, Integer> order, LocalDate date) {
-        int totalPrice = order.values().stream()
-                .reduce(Integer::sum)
-                .orElseGet(() -> 0);
-        if (totalPrice >= TERMS_OF_GIFT) {
+    public Optional<Event> caculateBenefit(Integer order, LocalDate date) {
+        if (order >= TERMS_OF_GIFT) {
             return Optional.of(getChampagne());
         }
         return Optional.empty();
@@ -32,8 +28,7 @@ public class Gift implements Event {
 
     @Override
     public String showBenefitDetail() {
-        return new StringBuilder(MENU.getMenuName())
-                .append(" ").append(String.format(GIFT_MESSAGE, NUMBER_OF_GIFT))
-                .append("\n").toString();
+        return MENU.getMenuName()
+                + " " + String.format(GIFT_MESSAGE, NUMBER_OF_GIFT);
     }
 }
