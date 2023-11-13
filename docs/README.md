@@ -250,11 +250,28 @@ Event<Integer, Optional<Event>>의 구현체
 ##### 필드
 
 - 주문
+  - 메뉴와 개수를 가지는 `Map`객체
 
 ##### 메서드
 
 - 주문을 카테고리 별 개수로 바꿔주는 메소드
+  - signature : `public Map<MenuGroup, Integer> toCountByMenuGroup()`
+  - return
+    - Map<MenuGroup, Integer>
+  - description
+    - order 객체를 `forEach`으로 순회하며 Menu로 MenuGroup을 찾는다.
+    - Map에 해당 메뉴 그룹이 없으면 추가하고 해당 메뉴 그룹과 메뉴 개수를 초기 값으로 설정한다.
+    - 있다면 해당 메뉴 그룹에 개수를 추가한다.
+    - 모든 entry를 순회했다면 만들어진 Map<MenuGroup, Integer> 객체를 반환한다.
+  
 - 주문의 총 금액을 반환하는 메소드
+  - signature : `public int calculateTotalPrice()`
+  - return
+    - int totalPrice
+  - description
+    - order를 `entrySet()`으로 순회한다.
+    - 각 entry마다 메뉴의 가격과 entry의 저장된 개수를 곱한다.
+    - 그렇게 나온 각 메뉴 가격들을 더한뒤 반환한다.
 
 ---
 
@@ -275,6 +292,10 @@ Event<Integer, Optional<Event>>의 구현체
       - 해당 달의 날짜 범위에 해당하지 않으면 발생 (ex. 12월 0일, 2월 29일)
   - return
     - LocalDate의 정적 메소드 `of()`를 활용해 2023년 12월 visitDay일을 반환한다.
+
+- 문자열 주문을 입력 받아 `Order`객체로 변환하는 메서드
+
+
 
 ---
 ### view
