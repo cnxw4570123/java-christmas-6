@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.*;
 import christmas.constant.Info;
 import christmas.controller.PreviewController;
 import christmas.domain.Badge;
+import christmas.domain.Menu;
+import christmas.domain.MenuGroup;
+import christmas.domain.Order;
 import christmas.service.PreviewService;
 import christmas.validator.Validator;
 import christmas.view.InputView;
@@ -13,6 +16,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,13 +44,13 @@ public class OwnTest {
     private static ByteArrayOutputStream byteArrayOutputStream;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         byteArrayOutputStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(byteArrayOutputStream));
     }
 
     @AfterEach
-    void setSystemOut(){
+    void setSystemOut() {
         System.setOut(System.out);
     }
 
@@ -79,7 +84,8 @@ public class OwnTest {
 
         // ExecutorService를 이용해 별도의 스레드에서 작업을 실행합니다.
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<LocalDate> future = executor.submit(() -> Validator.validate(inputDay, inputToVisitDate, outputView::printErrorMsg));
+        Future<LocalDate> future = executor.submit(
+                () -> Validator.validate(inputDay, inputToVisitDate, outputView::printErrorMsg));
 
         try {
             // Future의 get 메소드를 이용해 결과를 가져옵니다.
@@ -92,4 +98,47 @@ public class OwnTest {
         }
 
     }
+
+    @Test
+    void 올바른_카테고리별_메뉴_개수_계산() {
+        // given
+        Map<Menu, Integer> order = new HashMap<>();
+        order.put(Menu.BARBECUE_RIB, 2);
+        order.put(Menu.CHOCOLATE_CAKE, 1);
+        order.put(Menu.RED_WINE, 1);
+        order.put(Menu.T_BONE_STEAK, 10);
+        Order order1 = new Order(order);
+
+        // when
+        Map<MenuGroup, Integer> countByMenuGroup = order1.toCountByMenuGroup();
+
+        // then
+        assertThat(countByMenuGroup)
+                .contains(
+                        Map.entry(MenuGroup.MAIN_DISH, 12),
+                        Map.entry(MenuGroup.DESSERT, 1),
+                        Map.entry(MenuGroup.DRINK, 1)
+                );
+    }
+
+    @Test
+    void 메뉴에_해당하는_메뉴그룹이_틀립니다(){
+        // given
+        Map<Menu, Integer> order = new HashMap<>();
+        order.put(Menu.BARBECUE_RIB, 2);
+        Order order1 = new Order(order);
+
+        // when
+        Map<MenuGroup, Integer> countByMenuGroup = order1.toCountByMenuGroup();
+
+        // then
+        assertThat(countByMenuGroup)
+                .doesNotContain(
+                        Map.entry(MenuGroup.APPETIZER, 2),
+                        Map.entry(MenuGroup.DESSERT, 1),
+                        Map.entry(MenuGroup.DRINK, 1)
+                );
+    }
+
+
 }
