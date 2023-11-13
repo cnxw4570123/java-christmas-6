@@ -1,6 +1,7 @@
 package christmas;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import christmas.constant.Info;
 import christmas.controller.PreviewController;
@@ -85,11 +86,13 @@ public class OwnTest {
         try {
             // Future의 get 메소드를 이용해 결과를 가져옵니다.
             // 이 때, 1초가 지나도 결과가 반환되지 않으면 TimeoutException이 발생합니다.
-            LocalDate date = future.get(1, TimeUnit.SECONDS);
+            LocalDate date = future.get(500, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             // 1초가 지난 후 byteArrayOutputStream.toString()이 Info.INVALID_DATE를 포함하는지 확인합니다.
             assertThat(byteArrayOutputStream.toString())
                     .contains(Info.ERROR_MSG_INVALID_DATE);
+        }finally {
+            executor.shutdown();
         }
 
     }
@@ -116,8 +119,27 @@ public class OwnTest {
             }, delimiter = ':')
     void 올바른_주문의_총_가격을_계산합니다(String orderDetail, int totalPrice){
         Order order = Order.fromDetails(orderDetail);
-
         Assertions.assertEquals(totalPrice,order.calculateTotalPrice());
+    }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"제로콜라-1", "양송이수프-21", "크리스마스파스타-1,크리스마스파스타-1"})
+    void 주문이_올바르지_않습니다(String detail){
+        Supplier<String> detailSupplier = () -> detail;
+        Function<String, Order> orderMapper = previewService::parseInputToOrder;
+
+        ExecutorService excutor = Executors.newSingleThreadExecutor();
+        Future<Order> task = excutor.submit(
+                () -> Validator.validate(detailSupplier, orderMapper, outputView::printErrorMsg)
+        );
+
+        try {
+            task.get(500L, TimeUnit.MILLISECONDS);
+        }catch (InterruptedException | TimeoutException | ExecutionException e){
+            assertThat(byteArrayOutputStream.toString())
+                    .contains(Info.ERROR_MSG_INVALID_ORDER);
+        }finally {
+            excutor.shutdown();
+        }
     }
 }
