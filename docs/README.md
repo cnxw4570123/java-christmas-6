@@ -102,14 +102,14 @@
 
 ---
 
-#### Event `interface`
+#### Event<T, R> `interface`
 
 ---
 
 ##### 메서드
 
 - 혜택을 계산해주는 메서드
-- signature : `public Event caculateBenefit(Map<Menu, Integer> order, LocalDate date)`
+- signature : `public R caculateBenefit(T order, LocalDate date)`
 - description
   - 날짜와 주문 목록을 받아 혜택을 계산해준다.
 
@@ -123,7 +123,7 @@
 #### Discount
 
 ---
-Event 인터페이스의 구현체
+Event<Map<MenuGroup, Integer>, List<Event>> 인터페이스의 구현체
 
 ---
 
@@ -192,10 +192,10 @@ Event 인터페이스의 구현체
   - 현재 어떤 할인 적용되었는지 이름과 할인액을 문자열로 합쳐 반환한다.
 
 - 혜택을 계산해주는 메서드
-- signature : `public Optional<Event> caculateBenefit(Map<Menu, Integer> order, LocalDate date)`
+- signature : `public List<Event> caculateBenefit(Map<MenuGroup, Integer> order, LocalDate date)`
 - description
-  - 메뉴들을 받아 어떤 할인이 적용되는지와 할인 금액을 계산해 새 Discount 객체를 생성한다.
-  - 해당 내용이 없으면 `Optional.empty()`를 반환한다.
+  - 카테고리 별 개수를 받아 어떤 할인이 적용되는지와 할인 금액을 계산해 새 Discount 객체를 생성한다.
+  - 이후 25일과 같거나 이전일 경우 크리스마스 디데이 할인 Discount 객체를 추가한다.
 
 ---
 
@@ -203,7 +203,7 @@ Event 인터페이스의 구현체
 
 ---
 
-Event의 구현체
+Event<Integer, Optional<Event>>의 구현체
 
 ---
 
@@ -225,12 +225,12 @@ Event의 구현체
   - 샴페인 1개를 담은 Gift 객체 반환
 
 - 혜택을 계산해주는 메서드
-- signature : `public Optional<Event> caculateBenefit(Map<Menu, Integer> order, LocalDate date)`
+- signature : `public Optional<Event> caculateBenefit(Integer totalPrice, LocalDate date)`
 - return
   - 샴페인 Gift 객체
-  - null
+  - optional.empty()
 - description
-  - order의 금액을 모두 합쳐 총 금액이 12만원 이상이면 샴페인을 증정한다.
+  - 총 금액이 12만원 이상이면 샴페인을 증정한다.
   - 그렇지 못할 경우 `Optional.empty()`을 반환한다.
 
 - 혜택 명목과 금액을 보여주는 메소드
@@ -238,6 +238,25 @@ Event의 구현체
 - description
   - 현재 증정품의 이름과 증정품 개수를 문자열로 합쳐 반환한다.
 
+---
+
+#### Order
+
+---
+클라이언트가 입력한 문자열 주문을 데이터로 가짐
+
+---
+
+##### 필드
+
+- 주문
+
+##### 메서드
+
+- 주문을 카테고리 별 개수로 바꿔주는 메소드
+- 주문의 총 금액을 반환하는 메소드
+
+---
 
 ### service
 
