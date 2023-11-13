@@ -38,6 +38,13 @@
   - description
     - 현재 메뉴의 가격을 반환하는 메서드
 
+- 메뉴의 한글 이름으로 Menu를 반환하는 메서드
+  - signature : `public Menu findMenuByName(String name)`
+  - return
+    - Menu : 일치하는 메뉴
+  - description
+    - 메뉴들을 순회해 메뉴 이름을 확인한다.
+    - 일치하는 메뉴를 반환하고 없는 경우 `IllegalArgumentException`을 발생시킨다.
 ---
 
 #### enum MenuGroup
@@ -249,29 +256,79 @@ Event<Integer, Optional<Event>>의 구현체
 
 ##### 필드
 
-- 상세
+- detail
   - 메뉴와 개수를 가지는 `Map`객체
+- MAXIMUM_ORDER
+  - 한 번에 주문 가능한 최대 주문량 : 20
+- ORDER_PATTERN
+  - 메뉴 형식이 맞는지 검증하는 정규 표현식
 
 ##### 메서드
 
 - 생성자 메소드
-- signature : `public Order(String input)`
-- error
-  - `IllegalArgumentException`
-    - 메뉴 형식이 안맞을 경우
-    - 메뉴 개수의 총 합이 20을 초과할 경우
-    - 메뉴가 없는 경우
+- signature : `private Order(Map<Menu, Integer> detail)`
 - return
-  - Order : 검증 완료 시 새로운 객체 생성
+  - 새 `Order` 객체
+- description
+  - 새 `Order`객체를 반환한다.
+
+- 정적 팩토리 메서드
+  - signature : `public static Order fromDetails(String detail)`
+  - return
+    - `validate()`메소드를 이용해 검증 후 검증이 완료되면 생성자를 통해 새 `Order`객체를 반환한다.
+
+- 통합 검증 메서드
+- signature : `private static Map<Menu, Integer> validate(String input)`
+- return
+  - Map<Menu, Integer> : 검증 완료 시 `Order`에 사용될 detail 생성
 - description
   - 문자열을 받아 정규 표현식에 맞는지 확인하고 일치하지 않을 경우 `IllegalArgumentException`을 발생시킨다.
-  - 일치할 경우 ","기준으로 문자열들을 나눈다.
-  - 만약 개수가 0개면 `IllegalArgumentException`을 발생시킨다.
-  - 나눈 문자열을 다시 "-"로 나누고 메뉴와 개수를 가지는 `MapEntry`객체로 바꾼다.
-  - `Set`을 이용해 메뉴가 중복 될 경우 `IllegalArgumentException`을 발생시킨다.
-  - 이를 `Collections.toMap()`으로 맵 객체로 바꾼다.
-  - 바꾼 이후 Map객체의 value 더해 20이상이면 `IllegalArgumentException`을 발생시킨다.
-  - Set에 있는 메뉴들 기반으로 DESSERT, APPETIZER, MAIN_DISH 중 하나라도 없는 경우 오류를 발생시킨다.
+  - `validateMenuAndQuantity`메서드를 활용해 `MapEntry<Menu, Integer>`의 Stream으로 변환한다.
+  - 이를 `validateDuplication`메서드로 `Map<Menu, Integer>` 객체로 변환한다.
+  - `validateExceedMaximumOrder`과 `validateDrinksOnly`메소드를 활용해 검증한다.
+  - 이상 없으면 만들어진 `Map<Menu, Integer>` 객체를 반환한다.
+
+- 메뉴 이름과 수량을 확인하는 메서드
+  - signature : `private static Stream<MapEntry<Menu, Integer>> validateMenuAndQuantity(String input)`
+  - error
+    - IllegalArgumentException
+      - 해당 메뉴 이름이 없는 경우
+      - 개수가 0개이하인 경우
+  - return
+    - Stream<MapEntry<Menu, Integer>>
+      - detail에 넣을 `MapEntry` 객체들의 스트림
+  - description
+    - ","기준으로 문자열들을 나눈다.
+    - 메뉴 이름과 개수를 가진 문자열을 "-"로 나눈다.
+    - 메뉴 이름으로 Menu를 찾고 숫자를 정수로 바꾼다.
+    - `MapEntry.entry()`로 key-value 형태로 묶는다.
+
+- 메뉴가 중복인지 확인하는 메서드
+  - signature : `private static Map<Menu, Integer> validateDuplication(Stream<MapEntry<Menu, Integer>> mapEntryStream)`
+  - error
+    - IllegalArgumentException
+      - 메뉴가 중복인 경우
+  - return
+    - Map<Menu, Integer>
+    - 중복이 없을 경우 Stream을 `Collectors.toMap`으로 수정 불가능한 Map으로 모은다.
+
+- 메뉴 개수가 20개 이하인지 확인하는 메서드
+  - signature : `private static void validateExceedMaximumOrder(Map<Menu, Integer> details)`
+  - error
+    - IllegalArgumentException
+      - 총 메뉴 개수가 20개가 넘는 경우
+  - description
+    - details의 value들을 더해 20개를 초과하는지 검사한다.
+
+- 음료수만 시켰는지 확인하는 메서드
+  - signature : `private static void validateDrinksOnly(Map<Menu, Integer> detailCandidate)`
+  - error
+    - IllegalArgumentException
+      - 음료수만 시킨 경우
+  - description
+    - 메뉴들을 순회하면서 메뉴 그룹을 찾는다.
+    - 하나의 메뉴그룹들만 남긴 뒤 메뉴 그룹에 애피타이저, 메인메뉴, 디저트가 포함되는지 확인한다.
+    - 포함되지 않을 경우 `IllegalArgumentException`을 발생시킨다.
 
 - 주문을 카테고리 별 개수로 바꿔주는 메소드
   - signature : `public Map<MenuGroup, Integer> toCountByMenuGroup()`
