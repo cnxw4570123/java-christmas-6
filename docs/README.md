@@ -409,11 +409,39 @@ Event의 구현체
       - 새 `Order` 객체를 반환한다.
 
 - Order를 받아서 적용된 혜택들의 리스트를 반환받는 메소드
+  - signature : `private void addApplicableDiscounts(Order userOrder, LocalDate visitDate, List<Event> applicableEvents)`
+  - return
+    - List<Event> : 적용가능한 이벤트들
+  - description
+    - applyAvailableDiscounts와 applyAvailableGift를 활용해 applicableEvent에 이벤트를 넣어 반환한다.
+
+- 적용가능한 모든 할인을 적용해주는 메소드
+  - signature : `private void applyAvailableDiscounts(Order userOrder, LocalDate visitDate, List<Event> applicableEvents)`
+  - return
+  - description
+    - Discount 클래스의 apply---Discount 메소드들을 활용해 Optional<Event> 객체를 받아온다.
+    - 해당 할인이 있으면 applicableEvents에 넣어준다.
+
+- 적용가능한 모든 증정 이벤트를 적용해주는 메소드
+  - signature : `private void applyAvailableGiftEvent(Order userOrder, List<Event> applicableEvents)`
+  - description
+    - Gift 클래스의 applyGift 메소드들을 활용해 Optional<Event> 객체를 받아온다.
+    - 해당 증정품이 있으면 applicableEvents에 넣어준다.
+    
 
 - Order를 통해 총 주문 금액을 계산하는 메소드
+  - signature : `public int sumOrderPrice(Order userOrder)`
+  - return
+    - int : 총 금액
+  - description
+    - Order 객체의 calculateTotalPrice를 통해 얻은 총 금액을 반환한다.
 
 - Order를 카테고리 별 주문 개수로 바꾸는 메소드
-
+  - signature : `public Map<MenuGroup, Integer> gatherMenuCountByMenuGroup(Order userOrder)`
+  - return
+    - Map<MenuGroup, Integer>
+  - description
+    - Order 객체의 toCountByMenuGroup으로 변환한 Map<MenuGroup, Integer> 를 반환한다.
   
 ---
 ### view
