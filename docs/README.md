@@ -120,6 +120,12 @@
 - description
   - 현재 혜택의 이름과 금액을 문자열로 합쳐 반환한다.
 
+- 혜택 금액을 반환하는 메서드
+  - signature : `public int getBenefitAmount()`
+  - description
+    - 현재 혜택받은 금액을 반환한다.
+
+
 ---
 
 #### Discount
@@ -194,7 +200,7 @@ Event 인터페이스의 구현체
   - 현재 어떤 할인 적용되었는지 이름과 할인액을 문자열로 합쳐 반환한다.
 
 - 요일 할인을 계산해주는 메서드
-  - signature : `public Optional<Event> applyDayOfWeekDiscount(Map<MenuGroup, Integer> orderDetail, LocalDate visitDate)`
+  - signature : `public static Optional<Event> applyDayOfWeekDiscount(Map<MenuGroup, Integer> orderDetail, LocalDate visitDate)`
   - return
     - Optional<Event> - 할인 적용 가능할 때
     - Optional.empty() - 할인 적용 불가능할 때
@@ -221,7 +227,7 @@ Event 인터페이스의 구현체
     - 있으면 getWeekdayDiscount를 통해 새 Discount 객체를 반환한다.
 
 - 특별할인을 적용해주는 메서드
-  - signature : `public Optional<Event> applySpecialDiscount(LocalDate visitDate)`
+  - signature : `public static Optional<Event> applySpecialDiscount(LocalDate visitDate)`
   - return
     - Optional<Event> or Optional.empty()
   - description
@@ -229,13 +235,17 @@ Event 인터페이스의 구현체
     - 그렇지 않으면 Optional.empty()를 반환한다.
 
 - 크리스마스 디데이 할인을 적용해주는 메서드
-  - signature : `public Optional<Event> applyChristmasDDayDiscount(LocalDate date)`
+  - signature : `public static Optional<Event> applyChristmasDDayDiscount(LocalDate date)`
   - return
     - Optional<Event> or Optional.empty()
   - description
     - 방문일이 크리스마스 당일이거나 이전이면 새 Discount 객체를 반환한다.
     - 그렇지 않으면 Optional.empty()를 반환한다.
 
+- 할인 금액을 반환하는 메서드
+  - signature : `public int getBenefitAmount()`
+  - return
+    - 현재 할인 금액을 반환한다.
 
 ---
 
@@ -265,7 +275,7 @@ Event의 구현체
   - 샴페인 1개를 담은 Gift 객체 반환
 
 - 혜택을 계산해주는 메서드
-- signature : `public Optional<Event> applyGift(Integer totalPrice, LocalDate date)`
+- signature : `public static Optional<Event> applyGift(Integer totalPrice, LocalDate date)`
 - return
   - 샴페인 Gift 객체
   - optional.empty()
@@ -277,6 +287,16 @@ Event의 구현체
 - signature : `public String showBenefitDetail()`
 - description
   - 현재 증정품의 이름과 증정품 개수를 문자열로 합쳐 반환한다.
+
+- 증정품 개수를 반환하는 메서드
+  - signature : `public String showGiftDetail()`
+  - description
+    - 메뉴 이름과 개수를 문자열로 합쳐 반환한다.
+
+- 혜택 금액을 반환하는 메서드
+  - signature : `public int getBenefitAmount()`
+  - return
+    - 증정품의 가격
 
 ---
 
