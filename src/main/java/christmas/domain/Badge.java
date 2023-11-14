@@ -23,4 +23,8 @@ public enum Badge {
                 .findFirst()
                 .get();
     }
+
+    public String getName() {
+        return name;
+    }
 }

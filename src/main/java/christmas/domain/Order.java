@@ -1,8 +1,10 @@
 package christmas.domain;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -15,6 +17,7 @@ public class Order {
     private static final int MAXIMUM_ORDER = 20;
     private static final String ORDER_PATTERN = "^([가-힣]{3,8}-[0-9]{1,2})(,[가-힣]{3,8}-[0-9]{1,2})*$";
 
+    private static final String ORDER_PRINTING_TEMPLATE = "%s %d개";
     public static Order fromDetails(String input){
         Map<Menu, Integer> detail = validate(input);
         return new Order(detail);
@@ -34,9 +37,8 @@ public class Order {
 
     public int calculateTotalPrice() {
         return detail.entrySet().stream()
-                .map(entry -> entry.getKey().getMenuPrice() * entry.getValue())
-                .reduce(Integer::sum)
-                .orElseGet(() -> 0);
+                .mapToInt(entry -> entry.getKey().getMenuPrice() * entry.getValue())
+                .sum();
     }
 
     private static Map<Menu, Integer> validate(String input) {
@@ -75,22 +77,32 @@ public class Order {
 
     private static void validateExceedMaximumOrder(Map<Menu, Integer> details) {
         int totalCount = details.values().stream()
-                .reduce(Integer::sum)
-                .orElseGet(() -> 0);
+                .mapToInt(Integer::intValue)
+                .sum();
         if (totalCount > MAXIMUM_ORDER) {
             throw new IllegalArgumentException();
         }
     }
 
     private static void validateDrinksOnly(Map<Menu, Integer> detailCandidate) {
-        boolean isDrinksOnly = detailCandidate.keySet().stream()
-                .map(MenuGroup::checkMenuGroup)
-                .distinct()
-                .noneMatch(menuGroup -> menuGroup == MenuGroup.APPETIZER || menuGroup == MenuGroup.MAIN_DISH
-                        || menuGroup == MenuGroup.DESSERT);
-        if (isDrinksOnly) {
+        if (isDrinksOnly(detailCandidate)) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private static boolean isDrinksOnly(Map<Menu, Integer> detailCandidate) {
+        EnumSet<MenuGroup> nonDrinkGroups = EnumSet.of(MenuGroup.APPETIZER, MenuGroup.MAIN_DISH, MenuGroup.DESSERT);
+
+        return detailCandidate.keySet().stream()
+                .map(MenuGroup::checkMenuGroup)
+                .distinct()
+                .noneMatch(nonDrinkGroups::contains);
+    }
+
+    public List<String> detailToStrings(){
+        return detail.entrySet().stream()
+                .map(entry -> String.format(ORDER_PRINTING_TEMPLATE, entry.getKey(), entry.getValue()))
+                .toList();
     }
 
 }
