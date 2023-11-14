@@ -99,13 +99,18 @@
 ##### 메서드
 
 - 혜택 금액을 받아서 배지를 적용가능한지 확인하는 메서드
-- signature : `public static Badge checkBadge(int benefit)`
-- return
-  - 혜택 금액에 해당하는 Badge
-- description
-  - 혜택 금액을 확인하고 `Arrays.stream(Badge.values())`으로 각 뱃지마다 순회
-  - 순회 중 `filter`로 해당 금액이상인지 체크한다.
-  - 체크 후 조건에 해당하면 현재 뱃지 반환 없으면 다음 뱃지로 이동
+  - signature : `public static Badge checkBadge(int benefit)`
+  - return
+    - 혜택 금액에 해당하는 Badge
+  - description
+    - 혜택 금액을 확인하고 `Arrays.stream(Badge.values())`으로 각 뱃지마다 순회
+    - 순회 중 `filter`로 해당 금액이상인지 체크한다.
+    - 체크 후 조건에 해당하면 현재 뱃지 반환 없으면 다음 뱃지로 이동
+
+- 뱃지 이름을 반환하는 메서드
+  - signature : `public String getName()`
+  - return
+    - 뱃지 이름을 반환한다.
 
 ---
 
@@ -315,6 +320,8 @@ Event의 구현체
   - 한 번에 주문 가능한 최대 주문량 : 20
 - ORDER_PATTERN
   - 메뉴 형식이 맞는지 검증하는 정규 표현식
+- ORDER_PRINTING_TEMPLATE
+  - 주문받은 메뉴를 매핑하기 위한 문자열
 
 ##### 메서드
 
@@ -402,6 +409,13 @@ Event의 구현체
     - 각 entry마다 메뉴의 가격과 entry의 저장된 개수를 곱한다.
     - 그렇게 나온 각 메뉴 가격들을 더한뒤 반환한다.
 
+- 갖고 있는 주문을 메뉴와 개수의 문자열 리스트로 바꿔주는 메소드
+  - signature : `public List<String> detailToString()`
+  - return
+    - List<String> "메뉴이름 N개"와 같은 형식을 가진 문자열 리스트
+  - description
+    - Map의 각 원소마다 순회하면서 ORDER_PRINTING_TEMPLATE에 키인 메뉴이름과 값인 메뉴 개수를 매핑한다.
+    - 이를 모아 List로 담는다.
 ---
 
 ### service
@@ -462,7 +476,29 @@ Event의 구현체
     - Map<MenuGroup, Integer>
   - description
     - Order 객체의 toCountByMenuGroup으로 변환한 Map<MenuGroup, Integer> 를 반환한다.
-  
+
+- 총 혜택 금액을 계산해주는 메서드
+  - signature : `public int sumBenefitAmount(List<Event> appliedEvents)`
+  - return
+    - 총 혜택 금액
+  - description
+    - 각 Event의 getBenefitAmount로 혜택 금액을 반환받는다.
+    - 모두 더한다.
+
+- 이벤트 배지를 계산해주는 메서드
+  - signature : `public Badge calculateBadge(int totalBenefit)`
+  - return
+    - 해당하는 뱃지
+  - description
+    - Badge.checkBadge() 메서드로 해당하는 배지를 반환받는다.
+
+- 주문 내역을 문자열 리스트로 반환하는 메서드
+  - signature : `public getOrderDetails(Order userOrder)`
+  - return
+    - 주문 내역들
+  - description
+    - Order 객체의 detailToString() 메서드로 문자열 리스트를 반환받는다.
+
 ---
 ### view
 
