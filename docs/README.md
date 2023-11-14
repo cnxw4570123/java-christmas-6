@@ -115,11 +115,6 @@
 
 ##### 메서드
 
-- 혜택을 계산해주는 메서드
-- signature : `public R caculateBenefit(T order, LocalDate date)`
-- description
-  - 날짜와 주문 목록을 받아 혜택을 계산해준다.
-
 - 혜택 명목과 금액을 보여주는 메소드
 - signature : `public String showBenefitDetail()`
 - description
@@ -130,7 +125,7 @@
 #### Discount
 
 ---
-Event<Map<MenuGroup, Integer>, List<Event>> 인터페이스의 구현체
+Event 인터페이스의 구현체
 
 ---
 
@@ -166,28 +161,28 @@ Event<Map<MenuGroup, Integer>, List<Event>> 인터페이스의 구현체
 ##### 메서드
 
 - 평일 할인 객체를 반환하는 메서드
-- signature :`public Discount getWeekDayDiscount(int count)`
+- signature :`private static Discount getWeekDayDiscount(int count)`
 - return
   - 새 Discount 객체
 - description
   - 이름이 평일 할인이고 디저트 메뉴 * 2023의 할인금액을 갖는 새 Discount 객체 반환
 
 - 주말 할인 객체를 반환하는 메서드
-- signature : `public Discount getWeekendDiscount(int count)` 
+- signature : `private static Discount getWeekendDiscount(int count)` 
 - return
   - 새 Discount 객체
 - description
   - 이름이 주말 할인이고 메인 메뉴 * 2023의 할인금액을 갖는 새 Discount 객체 반환
 
 - 스페셜 할인 객체를 반환하는 메서드
-- signature : `public Discount getSpecialDiscount()`
+- signature : `private static Discount getSpecialDiscount()`
 - return
   - 새 Discount 객체
 - description
   - 이름이 특별 할인이고 1000원의 할인금액을 갖는 새 Discount 객체 반환
 
 - 디데이 할인 객체를 반환하는 메서드
-- signature : `public Discount getChristmasDiscount(LocalDate date)`
+- signature : `public static Discount getChristmasDiscount(LocalDate date)`
 - return
 - 새 Discount 객체
 - description
@@ -198,11 +193,49 @@ Event<Map<MenuGroup, Integer>, List<Event>> 인터페이스의 구현체
 - description
   - 현재 어떤 할인 적용되었는지 이름과 할인액을 문자열로 합쳐 반환한다.
 
-- 혜택을 계산해주는 메서드
-- signature : `public List<Event> caculateBenefit(Map<MenuGroup, Integer> order, LocalDate date)`
-- description
-  - 카테고리 별 개수를 받아 어떤 할인이 적용되는지와 할인 금액을 계산해 새 Discount 객체를 생성한다.
-  - 이후 25일과 같거나 이전일 경우 크리스마스 디데이 할인 Discount 객체를 추가한다.
+- 요일 할인을 계산해주는 메서드
+  - signature : `public Optional<Event> applyDayOfWeekDiscount(Map<MenuGroup, Integer> orderDetail, LocalDate visitDate)`
+  - return
+    - Optional<Event> - 할인 적용 가능할 때
+    - Optional.empty() - 할인 적용 불가능할 때
+  - description
+  - 방문 날짜가 주말인지 확인한다.
+    - 주말일 경우 `applyWeekendDiscount`메소드를 통해 Optional<Event>객체를 반환한다.
+    - 평일일 경우 `applyWeekdayDiscount`메소드를 통해 Optional<Event>객체를 반환한다.
+
+- 주말 할인을 적용해주는 메서드
+  - signature : `private static Optional<Event> applyWeekendDiscount(Map<MenuGroup, Integer> orderDetail)`
+  - return
+    - Optional<Event> or Optional.empty()
+  - description
+  - 주문 메뉴 그룹에 메인 메뉴가 있는지 확인한다.
+  - 있으면 getWeekendDiscount를 통해 새 Discount 객체를 반환한다.
+  - 없으면 Optional.empty를 반환한다.
+
+- 평일 할인을 적용해주는 메서드
+  - signature : `private static Optional<Event> applyWeekdayDiscount(Map<MenuGroup, Integer> orderDetail)`
+  - return
+    - Optional<Event> or Optional.empty()
+  - description
+    - 주문 메뉴 그룹에 디저트가 있는지 확인하고 없으면 Optional.empty()를 반환한다.
+    - 있으면 getWeekdayDiscount를 통해 새 Discount 객체를 반환한다.
+
+- 특별할인을 적용해주는 메서드
+  - signature : `public Optional<Event> applySpecialDiscount(LocalDate visitDate)`
+  - return
+    - Optional<Event> or Optional.empty()
+  - description
+    - 방문일이 일요일이거나 크리스마스 당일이면 새 Discount 객체를 반환한다.
+    - 그렇지 않으면 Optional.empty()를 반환한다.
+
+- 크리스마스 디데이 할인을 적용해주는 메서드
+  - signature : `public Optional<Event> applyChristmasDDayDiscount(LocalDate date)`
+  - return
+    - Optional<Event> or Optional.empty()
+  - description
+    - 방문일이 크리스마스 당일이거나 이전이면 새 Discount 객체를 반환한다.
+    - 그렇지 않으면 Optional.empty()를 반환한다.
+
 
 ---
 
@@ -210,7 +243,7 @@ Event<Map<MenuGroup, Integer>, List<Event>> 인터페이스의 구현체
 
 ---
 
-Event<Integer, Optional<Event>>의 구현체
+Event의 구현체
 
 ---
 
@@ -227,12 +260,12 @@ Event<Integer, Optional<Event>>의 구현체
 ##### 메서드
 
 - 샴페인을 생성하는 메서드
-- signature : `public Gift getChampagne()`
+- signature : `private static Gift getChampagne()`
 - return
   - 샴페인 1개를 담은 Gift 객체 반환
 
 - 혜택을 계산해주는 메서드
-- signature : `public Optional<Event> caculateBenefit(Integer totalPrice, LocalDate date)`
+- signature : `public Optional<Event> applyGift(Integer totalPrice, LocalDate date)`
 - return
   - 샴페인 Gift 객체
   - optional.empty()
