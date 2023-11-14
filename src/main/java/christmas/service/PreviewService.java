@@ -1,6 +1,7 @@
 package christmas.service;
 
 import christmas.constant.Info;
+import christmas.domain.Badge;
 import christmas.domain.Discount;
 import christmas.domain.Event;
 import christmas.domain.Gift;
@@ -48,4 +49,21 @@ public class PreviewService {
         return userOrder.toCountByMenuGroup();
     }
 
+    public int sumBenefitAmount(List<Event> appliedEvents){
+        return appliedEvents.stream()
+                .mapToInt(Event::getBenefitAmount)
+                .sum();
+    }
+
+    public Badge calculateBadge(int totalBenefit){
+        return Badge.checkBadge(totalBenefit);
+    }
+
+//    public String showBadgeName(Badge badge){
+//        return badge.getName();
+//    }
+
+    public List<String> getOrderDetails(Order userOrder){
+        return userOrder.detailToStrings();
+    }
 }
