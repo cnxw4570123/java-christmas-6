@@ -29,7 +29,7 @@ public class Gift implements Event {
 
     @Override
     public String showBenefitDetail(){
-        return GIFT_EVENT_MSG + Info.decimalFormat.format(menu.getMenuPrice());
+        return GIFT_EVENT_MSG + JOIN_COLON_WITH_MINUS + Info.WON_WITH_COMMA.format(menu.getMenuPrice());
     }
 
     public String showGiftDetail() {

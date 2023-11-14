@@ -74,7 +74,7 @@ public class Discount implements Event {
         return Optional.empty();
     }
 
-    public static Optional<Event> applyChristmasDDayDiscount(LocalDate date){
+    public static Optional<Event> applyChristmasDDayDiscount(LocalDate date) {
         if (!date.isAfter(D_DAY)) {
             return Optional.of(getChristmasDiscount(date));
         }
@@ -83,11 +83,11 @@ public class Discount implements Event {
 
     @Override
     public String showBenefitDetail() {
-        return name + Info.decimalFormat.format(discountAmount);
+        return name + JOIN_COLON_WITH_MINUS + Info.WON_WITH_COMMA.format(discountAmount);
     }
 
     @Override
-    public int getBenefitAmount(){
+    public int getBenefitAmount() {
         return this.discountAmount;
     }
 }
