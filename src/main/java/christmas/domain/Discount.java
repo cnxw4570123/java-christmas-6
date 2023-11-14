@@ -46,7 +46,7 @@ public class Discount implements Event {
         return new Discount(CHRISTMAS_D_DAY_DISCOUNT_MSG, discount + START_DAY_DISCOUNT);
     }
 
-    public Optional<Event> applyDayOfWeekDiscount(Map<MenuGroup, Integer> orderDetail, LocalDate visitDate) {
+    public static Optional<Event> applyDayOfWeekDiscount(Map<MenuGroup, Integer> orderDetail, LocalDate visitDate) {
         if (WEEKEND.contains(visitDate.getDayOfWeek())) {
             return applyWeekendDiscount(orderDetail);
         }
@@ -67,14 +67,14 @@ public class Discount implements Event {
         return Optional.empty();
     }
 
-    public Optional<Event> applySpecialDiscount(LocalDate date) {
+    public static Optional<Discount> applySpecialDiscount(LocalDate date) {
         if (date.getDayOfWeek() == DayOfWeek.SUNDAY || date.isEqual(D_DAY)) {
             return Optional.of(getSpecialDiscount());
         }
         return Optional.empty();
     }
 
-    public Optional<Event> applyChristmasDDayDiscount(LocalDate date){
+    public static Optional<Event> applyChristmasDDayDiscount(LocalDate date){
         if (!date.isAfter(D_DAY)) {
             return Optional.of(getChristmasDiscount(date));
         }
@@ -84,5 +84,10 @@ public class Discount implements Event {
     @Override
     public String showBenefitDetail() {
         return name + Info.decimalFormat.format(discountAmount);
+    }
+
+    @Override
+    public int getBenefitAmount(){
+        return this.discountAmount;
     }
 }

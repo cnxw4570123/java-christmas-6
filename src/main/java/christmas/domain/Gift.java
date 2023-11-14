@@ -1,11 +1,13 @@
 package christmas.domain;
 
-import java.time.LocalDate;
+import christmas.constant.Info;
 import java.util.Optional;
 
 public class Gift implements Event {
     private static final int TERMS_OF_GIFT = 120_000;
-    private static final String GIFT_MESSAGE = "%d개";
+    private static final String GIFT_COUNT = "%d개";
+
+    private static final String GIFT_EVENT_MSG = "증정 이벤트";
 
     private final Menu menu;
     private final int numberOfGift;
@@ -18,7 +20,7 @@ public class Gift implements Event {
         return new Gift(Menu.CHAMPAGNE, 1);
     }
 
-    public static Optional<Event> applyGift(Integer totalPrice, LocalDate date) {
+    public static Optional<Event> applyGift(Integer totalPrice) {
         if (totalPrice >= TERMS_OF_GIFT) {
             return Optional.of(getChampagne());
         }
@@ -26,8 +28,17 @@ public class Gift implements Event {
     }
 
     @Override
-    public String showBenefitDetail() {
+    public String showBenefitDetail(){
+        return GIFT_EVENT_MSG + Info.decimalFormat.format(menu.getMenuPrice());
+    }
+
+    public String showGiftDetail() {
         return menu.getMenuName()
-                + " " + String.format(GIFT_MESSAGE, numberOfGift);
+                + " " + String.format(GIFT_COUNT, numberOfGift);
+    }
+
+    @Override
+    public int getBenefitAmount(){
+        return this.menu.getMenuPrice();
     }
 }
