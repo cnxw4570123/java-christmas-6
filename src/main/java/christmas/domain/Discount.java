@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class Discount implements Event {
-    private static final LocalDate D_DAY = LocalDate.of(Info.THIS_YEAR, Info.THIS_MONTH, 25);
+    private static final LocalDate CHRISTMAS = LocalDate.of(Info.THIS_YEAR, Info.THIS_MONTH, 25);
     private static final LocalDate START_DAY = LocalDate.of(Info.THIS_YEAR, Info.THIS_MONTH, 1);
     private static final int START_DAY_DISCOUNT = 1_000;
     private static final int D_DAY_VARIABLE_DISCOUNT = 100;
@@ -68,17 +68,17 @@ public class Discount implements Event {
     }
 
     public static Optional<Discount> applySpecialDiscount(LocalDate date) {
-        if (date.getDayOfWeek() == DayOfWeek.SUNDAY || date.isEqual(D_DAY)) {
+        if (date.getDayOfWeek() == DayOfWeek.SUNDAY || date.isEqual(CHRISTMAS)) {
             return Optional.of(getSpecialDiscount());
         }
         return Optional.empty();
     }
 
     public static Optional<Event> applyChristmasDDayDiscount(LocalDate date) {
-        if (!date.isAfter(D_DAY)) {
-            return Optional.of(getChristmasDiscount(date));
+        if (date.isAfter(CHRISTMAS)) {
+            return Optional.empty();
         }
-        return Optional.empty();
+        return Optional.of(getChristmasDiscount(date));
     }
 
     @Override

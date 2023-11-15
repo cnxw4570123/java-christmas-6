@@ -4,8 +4,8 @@ import christmas.constant.Info;
 import java.util.Optional;
 
 public class Gift implements Event {
-    private static final int TERMS_OF_GIFT = 120_000;
-    private static final String GIFT_COUNT = "%d개";
+    private static final int MINIMUM_PURCHASE_FOR_GIFT = 120_000;
+    private static final String GIFT_COUNT_MSG = "%d개";
 
     private static final String GIFT_EVENT_MSG = "증정 이벤트";
 
@@ -21,7 +21,7 @@ public class Gift implements Event {
     }
 
     public static Optional<Event> applyGift(Integer totalPrice) {
-        if (totalPrice >= TERMS_OF_GIFT) {
+        if (totalPrice >= MINIMUM_PURCHASE_FOR_GIFT) {
             return Optional.of(getChampagne());
         }
         return Optional.empty();
@@ -34,7 +34,7 @@ public class Gift implements Event {
 
     public String showGiftDetail() {
         return menu.getMenuName()
-                + " " + String.format(GIFT_COUNT, numberOfGift);
+                + " " + String.format(GIFT_COUNT_MSG, numberOfGift);
     }
 
     @Override
