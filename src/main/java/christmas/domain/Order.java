@@ -1,10 +1,10 @@
 package christmas.domain;
 
+import christmas.constant.Info;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -15,6 +15,8 @@ import org.assertj.core.data.MapEntry;
 public class Order {
     private final Map<Menu, Integer> detail;
     private static final int MAXIMUM_ORDER = 20;
+    private static final String MENU_SEPARATOR = ",";
+    private static final String MENU_COUNT_SEPARATOR = "-";
     private static final String ORDER_PATTERN = "^([가-힣]{3,8}-[0-9]{1,2})(,[가-힣]{3,8}-[0-9]{1,2})*$";
 
     private static final String ORDER_PRINTING_TEMPLATE = "%s %d개";
@@ -54,9 +56,9 @@ public class Order {
     }
 
     private static Stream<MapEntry<Menu, Integer>> validateMenuAndQuantity(String input) {
-        return Arrays.stream(input.split(","))
+        return Arrays.stream(input.split(MENU_SEPARATOR))
                 .map(eachOrder -> {
-                    String[] menuAndCount = eachOrder.split("-");
+                    String[] menuAndCount = eachOrder.split(MENU_COUNT_SEPARATOR);
                     Menu menu = Menu.findMenuByName(menuAndCount[0]);
                     int count = Integer.parseUnsignedInt(menuAndCount[1]);
                     if (count <= 0) {
@@ -100,11 +102,11 @@ public class Order {
                 .noneMatch(nonDrinkGroups::contains);
     }
 
-    public List<String> detailToStrings() {
+    public String detailToStrings() {
         return detail.entrySet().stream()
                 .map(entry -> String.format(ORDER_PRINTING_TEMPLATE,
                         entry.getKey().getMenuName(), entry.getValue()))
-                .toList();
+                .collect(Collectors.joining(Info.NEW_LINE));
     }
 
 }

@@ -60,7 +60,7 @@ public class PreviewService {
         return Badge.fromBenefitAmount(totalBenefit);
     }
 
-    public List<String> getOrderDetails(Order userOrder){
+    public String getOrderDetails(Order userOrder){
         return userOrder.detailToStrings();
     }
 
@@ -79,6 +79,6 @@ public class PreviewService {
 
         return appliedEvents.stream()
                 .map(Event::showBenefitDetail)
-                .collect(Collectors.joining("\n"));
+                .collect(Collectors.joining(Info.NEW_LINE));
     }
 }
