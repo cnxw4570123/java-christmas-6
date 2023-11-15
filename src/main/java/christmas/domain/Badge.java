@@ -17,11 +17,11 @@ public enum Badge {
     }
 
 
-    public static Badge checkBadge(int benefit){
+    public static Badge fromBenefitAmount(int benefit){
         return Arrays.stream(Badge.values())
                 .filter(badge -> benefit >= badge.minValue)
                 .findFirst()
-                .get();
+                .orElse(NONE);
     }
 
     public String getName() {

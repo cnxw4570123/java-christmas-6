@@ -18,7 +18,8 @@ public class Order {
     private static final String ORDER_PATTERN = "^([가-힣]{3,8}-[0-9]{1,2})(,[가-힣]{3,8}-[0-9]{1,2})*$";
 
     private static final String ORDER_PRINTING_TEMPLATE = "%s %d개";
-    public static Order fromDetails(String input){
+
+    public static Order fromDetails(String input) {
         Map<Menu, Integer> detail = validate(input);
         return new Order(detail);
     }
@@ -99,9 +100,10 @@ public class Order {
                 .noneMatch(nonDrinkGroups::contains);
     }
 
-    public List<String> detailToStrings(){
+    public List<String> detailToStrings() {
         return detail.entrySet().stream()
-                .map(entry -> String.format(ORDER_PRINTING_TEMPLATE, entry.getKey().getMenuName(), entry.getValue()))
+                .map(entry -> String.format(ORDER_PRINTING_TEMPLATE,
+                        entry.getKey().getMenuName(), entry.getValue()))
                 .toList();
     }
 
