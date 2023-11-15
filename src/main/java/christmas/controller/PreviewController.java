@@ -35,7 +35,7 @@ public class PreviewController {
         outputView.printUserOrderMenus(previewService.getOrderDetails(userOrder));
         int orderPrice = previewService.sumOrderPrice(userOrder);
         outputView.printSummedOrderPrice(orderPrice);
-        List<Event> applicableEvents = previewService.getAllApplicableEvents(userOrder, visitDate);
+        List<Event> applicableEvents = previewService.getAllApplicableEvents(orderPrice, userOrder, visitDate);
         outputView.printGiftInfo(previewService.getGiftDetail(applicableEvents));
         String eventDetails = previewService.toEventDetails(applicableEvents);
         outputView.printAppliedEventDetails(eventDetails);

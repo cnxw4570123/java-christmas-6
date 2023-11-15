@@ -9,6 +9,7 @@ import christmas.domain.MenuGroup;
 import christmas.domain.Order;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,7 +24,11 @@ public class PreviewService {
         return Order.fromDetails(input);
     }
 
-    public List<Event> getAllApplicableEvents(Order userOrder, LocalDate visitDate){
+    public List<Event> getAllApplicableEvents(int totalOrderPrice, Order userOrder, LocalDate visitDate){
+        if (totalOrderPrice < Info.MINIMUM_PURCHASE_FOR_EVENT) {
+            return Collections.emptyList();
+        }
+
         List<Event> applicableEvents = new ArrayList<>();
         applyAvailableDiscounts(userOrder, visitDate, applicableEvents);
         applyAvailableGiftEvent(userOrder, applicableEvents);
