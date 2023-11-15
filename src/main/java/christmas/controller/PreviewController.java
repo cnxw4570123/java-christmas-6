@@ -25,15 +25,19 @@ public class PreviewController {
 
     public void previewReceipt(){
         inputView.printGreeting();
-        LocalDate visitDate = getVisitDate();
+        LocalDate visitDate = getValidatedVisitDate();
         outputView.printPreviewStartMsg(visitDate.getMonthValue(), visitDate.getDayOfMonth());
-        Order userOrder = inputToOrder();
+        Order userOrder = getValidatedOrder();
+        printUserOrderPreview(userOrder, visitDate);
+    }
+
+    private void printUserOrderPreview(Order userOrder, LocalDate visitDate) {
         outputView.printUserOrderMenus(previewService.getOrderDetails(userOrder));
         int orderPrice = previewService.sumOrderPrice(userOrder);
         outputView.printSummedOrderPrice(orderPrice);
         List<Event> applicableEvents = previewService.getAllApplicableEvents(userOrder, visitDate);
         outputView.printGiftInfo(previewService.getGiftDetail(applicableEvents));
-        List<String> eventDetails = previewService.toEventDetail(applicableEvents);
+        String eventDetails = previewService.toEventDetails(applicableEvents);
         outputView.printAppliedEventDetails(eventDetails);
         int benefitAmount = previewService.sumBenefitAmount(applicableEvents);
         outputView.printTotalDiscountAmount(benefitAmount);
@@ -42,22 +46,15 @@ public class PreviewController {
         outputView.printEventBadge(visitDate.getMonthValue(), badge.getName());
     }
 
-    public LocalDate getVisitDate(){
+    public LocalDate getValidatedVisitDate(){
         Supplier<Integer> inputDay = inputView::inputVisitDate;
         Function<Integer, LocalDate> inputToVisitDate = previewService::parseInputToVisitDate;
-
         return Validator.validate(inputDay, inputToVisitDate, outputView::printErrorMsg);
     }
 
-    public Order inputToOrder(){
+    public Order getValidatedOrder(){
         Supplier<String> inputOrder = inputView::inputOrders;
         Function<String, Order> parseInputToOrder = previewService::parseInputToOrder;
-
         return Validator.validate(inputOrder, parseInputToOrder, outputView::printErrorMsg);
     }
-
-//    public String takeGiftInfo(List<Event> appliedEvents){
-//        return previewService.getGiftDetail(appliedEvents);
-//    }
-
 }
