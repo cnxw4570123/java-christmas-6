@@ -37,14 +37,8 @@ public class OutputView {
         System.out.println(PRESENTATION_MENU + giftInfo + "\n");
     }
 
-    public void printAppliedEventDetails(List<String> eventDetails) {
-        if (!eventDetails.isEmpty()) {
-            String eventLog = eventDetails.stream()
-                    .collect(Collectors.joining("\n", DISCOUNT_DETAILS, "\n"));
-            System.out.printf(eventLog + "\n");
-            return;
-        }
-        System.out.println(DISCOUNT_DETAILS + Info.EMPTY + "\n");
+    public void printAppliedEventDetails(String eventDetails) {
+        System.out.println(DISCOUNT_DETAILS + eventDetails + "\n");
     }
 
     public void printTotalDiscountAmount(int totalDiscounts) {
