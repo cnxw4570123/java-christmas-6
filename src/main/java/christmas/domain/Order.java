@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import org.assertj.core.data.MapEntry;
 
 public class Order {
-    private final Map<Menu, Integer> detail;
     private static final int MAXIMUM_ORDER = 20;
     private static final String MENU_SEPARATOR = ",";
     private static final String MENU_COUNT_SEPARATOR = "-";
@@ -19,6 +18,7 @@ public class Order {
 
     private static final String ORDER_PRINTING_TEMPLATE = "%s %d개";
     private static final EnumSet<MenuGroup> nonDrinkGroups = EnumSet.of(MenuGroup.APPETIZER, MenuGroup.MAIN_DISH, MenuGroup.DESSERT);
+    private final Map<Menu, Integer> detail;
 
     public static Order fromDetails(String input) {
         Map<Menu, Integer> detail = validate(input);
