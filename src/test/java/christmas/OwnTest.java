@@ -37,13 +37,36 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 public class OwnTest {
+    private static ByteArrayOutputStream byteArrayOutputStream;
+
+    private static Stream<Arguments> forDiscountTest() {
+        return Stream.of(
+                Arguments.of(4, "초코케이크-1,제로콜라-1", "평일 할인: -2,023원\n크리스마스 디데이 할인: -1,300원", "평일과 크리스마스 할인"),
+                Arguments.of(8, "티본스테이크-1,제로콜라-1", "주말 할인: -2,023원\n크리스마스 디데이 할인: -1,700원", "주말과 크리스마스 할인"),
+                Arguments.of(29, "티본스테이크-1,바비큐립-1,크리스마스파스타-1,제로콜라-1", "주말 할인: -6,069원\n증정 이벤트: -25,000원",
+                        "주말 할인과 증정이벤트"),
+                Arguments.of(31, "초코케이크-10", "평일 할인: -20,230원\n특별 할인: -1,000원\n증정 이벤트: -25,000원",
+                        "평일과 특별 할인 그리고 증정이벤트"),
+                Arguments.of(25, "초코케이크-10,제로콜라-1",
+                        "평일 할인: -20,230원\n특별 할인: -1,000원\n크리스마스 디데이 할인: -3,400원\n증정 이벤트: -25,000원", "풀코스")
+        );
+    }
+
+    private static Stream<Arguments> orderAndResultGenerator() {
+        return Stream.of(
+                Arguments.of("양송이수프-10,초코케이크-5,크리스마스파스타-5", List.of("양송이수프 10개", "초코케이크 5개", "크리스마스파스타 5개")),
+                Arguments.of("아이스크림-1", List.of("아이스크림 1개")),
+                Arguments.of("티본스테이크-1,양송이수프-1", List.of("티본스테이크 1개", "양송이수프 1개")),
+                Arguments.of("제로콜라-1,레드와인-1,바비큐립-1", List.of("제로콜라 1개", "레드와인 1개", "바비큐립 1개"))
+        );
+    }
 
     PreviewService previewService = new PreviewService();
     InputView inputView = new InputView();
     OutputView outputView = new OutputView();
     PreviewController previewController = new PreviewController(previewService, inputView, outputView);
 
-    private static ByteArrayOutputStream byteArrayOutputStream;
+    private final String LINE_SEPARATOR = System.lineSeparator();
 
     @BeforeEach
     void setUp() {
@@ -135,7 +158,25 @@ public class OwnTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"제로콜라-1", "양송이수프-21", "크리스마스파스타-1,크리스마스파스타-1"})
+    @MethodSource("orderAndResultGenerator")
+    void 주문_확인_도와드리겠습니다(String orderDetail, List<String> args) {
+        // when
+        Order order = previewService.parseInputToOrder(orderDetail);
+        String detailToStrings = previewService.getOrderDetails(order);
+        String expect = String.join(LINE_SEPARATOR, args);
+        // then
+        assertThat(detailToStrings).contains(args);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "제로콜라-1",
+            "양송이수프-15,제로콜라-3,티본스테이크-2,아이스크림-1",
+            "크리스마스파스타-1,크리스마스파스타-1",
+            "티본스페이크-1",
+            "양송이 수프-1",
+            "양송이수프-0"
+    })
     void 주문이_올바르지_않습니다(String detail) {
         // given
         Supplier<String> detailSupplier = () -> detail;
@@ -180,19 +221,9 @@ public class OwnTest {
     }
 
 
-    private static Stream<Arguments> forDiscountTest() {
-        return Stream.of(
-                Arguments.of(4, "초코케이크-1,제로콜라-1", "평일 할인: -2,023원\n크리스마스 디데이 할인: -1,300원"),
-                Arguments.of(8, "티본스테이크-1,제로콜라-1", "주말 할인: -2,023원\n크리스마스 디데이 할인: -1,700원"),
-                Arguments.of(29, "티본스테이크-1,바비큐립-1,크리스마스파스타-1,제로콜라-1", "주말 할인: -6,069원\n증정 이벤트: -25,000원"),
-                Arguments.of(31, "초코케이크-10", "평일 할인: -20,230원\n특별 할인: -1,000원\n증정 이벤트: -25,000원"),
-                Arguments.of(25, "초코케이크-10,제로콜라-1", "평일 할인: -20,230원\n특별 할인: -1,000원\n크리스마스 디데이 할인: -3,400원\n증정 이벤트: -25,000원")
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("forDiscountTest")
-    void 적용된_이벤트가_일치합니다(int visitDay, String order, String output) {
+    @ParameterizedTest(name = "{0}일 {1} 주문 - {3}")
+    @MethodSource({"forDiscountTest"})
+    void 적용된_이벤트가_일치합니다(int visitDay, String order, String output, String explanation) {
         // given
         LocalDate localDate = previewService.parseInputToVisitDate(visitDay);
         Order userOrder = previewService.parseInputToOrder(order);
@@ -203,7 +234,7 @@ public class OwnTest {
         String applicableEventToString = previewService.toEventDetails(applicableEvents);
 
         // then
-        assertEquals(output,applicableEventToString);
+        assertEquals(output, applicableEventToString);
 
     }
 
@@ -214,14 +245,14 @@ public class OwnTest {
             "1:크리스마스파스타-2:5046:STAR",
             "25:아이스크림-3:10469:TREE" //3400 + 6069
     }, delimiter = ':')
-    void 뱃지를_잘_계산해주는지_확인합니다(int visitDay, String order, int totalBenefit, Badge badge){
+    void 뱃지를_잘_계산해주는지_확인합니다(int visitDay, String order, int totalBenefit, Badge badge) {
         // given
         Order inputToOrder = previewService.parseInputToOrder(order);
         LocalDate localDate = previewService.parseInputToVisitDate(visitDay);
         int orderPrice = previewService.sumOrderPrice(inputToOrder);
 
         // when
-        List<Event> applicableEvents = previewService.getAllApplicableEvents(orderPrice, inputToOrder,localDate);
+        List<Event> applicableEvents = previewService.getAllApplicableEvents(orderPrice, inputToOrder, localDate);
         int sumBenefitAmount = previewService.sumBenefitAmount(applicableEvents);
 
         // then
