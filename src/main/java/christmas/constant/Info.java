@@ -10,4 +10,5 @@ public class Info {
     public static final String ERROR_MSG_INVALID_ORDER = "유효하지 않은 주문입니다. 다시 입력해 주세요.";
     public static final String EMPTY = "없음";
     public static final DecimalFormat WON_WITH_COMMA = new DecimalFormat("#,###원");
+    public static final String NEW_LINE = System.lineSeparator();
 }
