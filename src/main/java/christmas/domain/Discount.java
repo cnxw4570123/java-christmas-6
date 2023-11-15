@@ -83,7 +83,7 @@ public class Discount implements Event {
 
     @Override
     public String showBenefitDetail() {
-        return name + JOIN_COLON_WITH_MINUS + Info.WON_WITH_COMMA.format(discountAmount);
+        return name + Info.COLON_WITH_SPACE + Info.MINUS + Info.WON_WITH_COMMA.format(discountAmount);
     }
 
     @Override

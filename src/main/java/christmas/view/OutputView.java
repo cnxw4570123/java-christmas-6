@@ -38,6 +38,10 @@ public class OutputView {
     }
 
     public void printTotalDiscountAmount(int totalDiscounts) {
+        if(totalDiscounts != 0){
+            System.out.println(TOTAL_DISCOUNT + Info.MINUS + Info.WON_WITH_COMMA.format(totalDiscounts) + Info.NEW_LINE);
+            return;
+        }
         System.out.println(TOTAL_DISCOUNT + Info.WON_WITH_COMMA.format(totalDiscounts) + Info.NEW_LINE);
     }
 

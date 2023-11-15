@@ -11,4 +11,7 @@ public class Info {
     public static final String EMPTY = "없음";
     public static final DecimalFormat WON_WITH_COMMA = new DecimalFormat("#,###원");
     public static final String NEW_LINE = System.lineSeparator();
+
+    public static final String COLON_WITH_SPACE = ": ";
+    public static final String MINUS = "-";
 }
