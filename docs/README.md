@@ -656,8 +656,28 @@ Event의 구현체
 
 ##### 메서드
 
+- 미리보기 과정을 제어하는 메서드
+  - signature : `public void previewReceipt()`
+  - description
+    - 환영 인사를 출력시킨다.
+    - 방문일과 주문을 입력받고 검증에 성공하면 각각 날짜와 Order 객체로 반환한다.
+    - 검증에 실패하면 올바른 주문을 입력할 때까지 에러메시지와 함께 다시 입력받는다.
+    - Order와 LocalDate 객체를 활용해 printUserOrderPreview 메서드로 미리보기를 출력한다.
+
+- 주문과 방문일을 서비스 레이어를 이용해 가공하고 이를 출력시키는 메소드
+  - signature : `public void PrintUserOrderPreview(Order userOrder, LocalDate visitDate)`
+  - description
+    - 주문 메뉴와 개수를 OutputView로 전달해 출력한다.
+    - 할인 전 주문 총 금액을 outputView로 전달해 출력한다.
+    - 증정품 내역을을 outputView로 전달해 출력한다.
+    - 적용된 모든 이벤트 내역을 outputView로 전달해 출력한다.
+    - 적용된 이벤트의 총 혜택 금액을 outputView로 전달해 출력한다.
+    - 총 금액에서 총 혜택 금액을 뺀 금액을 outputView로 전달해 출력한다.
+    - 뱃지 이름을 outputView로 전달해 출력한다.
+  
+
 - 입력 받은 방문일을 LocalDate로 만들어주는 메서드
-  - signature : `public LocalDate getVisitDate()`
+  - signature : `public LocalDate getValidatedVisitDate()`
   - return
     - LocalDate : 입력받은 정수를 `previewService.parseInputToVisitDate()`로 가공한 날짜
   - description
@@ -666,7 +686,7 @@ Event의 구현체
     - `Validator.validate()`메서드를 이용해 날짜로 변환한다.
 
 - 입력 받은 주문을 Order로 만들어주는 메서드
-  - signature : `public Order getOrder()`
+  - signature : `public Order getValidatedOrder()`
   - return
     - Order : 입력받은 문자열을 `previewService.parseInputToOrder()`로 변환한 객체
 ---
@@ -711,3 +731,9 @@ Event의 구현체
   - "유효하지 않은 날짜입니다. 다시 입력해주세요."
 - ERROR_MSG_INVALID_ORDER 
   - "유효하지 않은 주문입니다. 다시 입력해주세요."
+- EMPTY
+  - "없음"
+
+- `DecimalFormat`
+- WON_WITH_COMMA
+  - 숫자를 천원단위로 ','와 함께 끊어줄 포매터
