@@ -18,7 +18,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -65,25 +64,25 @@ public class OwnTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {10, 13})
-    void 날짜_검증_정상작동_확인(int test) {
-        Supplier<Integer> inputDay = () -> test;
+    @ValueSource(strings = {"10", "13"})
+    void 날짜_검증_정상작동_확인(String test) {
+        Supplier<Integer> inputDay = () -> Integer.parseUnsignedInt(test);
         Function<Integer, LocalDate> inputToVisitDate = previewService::parseInputToVisitDate;
 
         assertTimeoutPreemptively(
                 Duration.ofSeconds(1L),
                 () -> {
                     LocalDate date = Validator.validate(inputDay, inputToVisitDate, outputView::printErrorMsg);
-                    assertEquals(date.getDayOfMonth(), test);
+                    assertEquals(Integer.toString(date.getDayOfMonth()), test);
                 }
         );
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {32, 0})
-    void 날짜_검증_시_유효한_값을_넣어_주세요(int test) {
+    @ValueSource(strings = {"!", "-1", "32", "0"})
+    void 날짜_검증_시_유효한_값을_넣어_주세요(String test) {
         // given
-        Supplier<Integer> inputDay = () -> test;
+        Supplier<Integer> inputDay = () -> Integer.parseUnsignedInt(test);
         Function<Integer, LocalDate> inputToVisitDate = previewService::parseInputToVisitDate;
 
         // ExecutorService를 이용해 별도의 스레드에서 작업을 실행합니다.
@@ -162,47 +161,49 @@ public class OwnTest {
     @ParameterizedTest
     @CsvSource(value = {
             "29:타파스-2,제로콜라-1,초코케이크-1", // 주말에 메인 없이
-            "28:시저샐러드-1,티본스테이크-1,제로콜라-1" // 평일에 디저트 없이
+            "28:시저샐러드-1,티본스테이크-1,제로콜라-1", // 평일에 디저트 없이
+            "26:아이스크림-1,제로콜라-1" // 평일에 디저트지만 이벤트 조건(10,000원 이상) 미충족
     }
             , delimiter = ':')
     void 적용된_할인이_없습니다(int visitDay, String order) {
         // given
         LocalDate visitDate = previewService.parseInputToVisitDate(visitDay);
         Order userOrder = previewService.parseInputToOrder(order);
+        int orderPrice = previewService.sumOrderPrice(userOrder);
+        int zero = 0;
 
         // when
-        List<Event> applicableEvents = previewService.getAllApplicableEvents(userOrder, visitDate);
+        List<Event> applicableEvents = previewService.getAllApplicableEvents(orderPrice, userOrder, visitDate);
 
         // then
-        assertThat(applicableEvents.equals(Collections.EMPTY_LIST));
+        assertEquals(applicableEvents.size(), zero);
     }
 
 
     private static Stream<Arguments> forDiscountTest() {
         return Stream.of(
-                Arguments.of(4, "초코케이크-1,제로콜라-1", List.of("평일 할인: -2,023원", "크리스마스 디데이 할인: -1,300원")),
-                Arguments.of(8, "티본스테이크-1,제로콜라-1", List.of("주말 할인: -2,023원", "크리스마스 디데이 할인: -1,700원")),
-                Arguments.of(29, "티본스테이크-1,바비큐립-1,크리스마스파스타-1,제로콜라-1", List.of("주말 할인: -6,069원", "증정 이벤트: -25,000원")),
-                Arguments.of(31, "초코케이크-10", List.of("평일 할인: -20,230원", "특별 할인: -1,000원", "증정 이벤트: -25,000원")),
-                Arguments.of(25, "초코케이크-10,제로콜라-1", List.of("평일 할인: -20,230원", "특별 할인: -1,000원", "크리스마스 디데이 할인: -3,400원", "증정 이벤트: -25,000원"))
+                Arguments.of(4, "초코케이크-1,제로콜라-1", "평일 할인: -2,023원\n크리스마스 디데이 할인: -1,300원"),
+                Arguments.of(8, "티본스테이크-1,제로콜라-1", "주말 할인: -2,023원\n크리스마스 디데이 할인: -1,700원"),
+                Arguments.of(29, "티본스테이크-1,바비큐립-1,크리스마스파스타-1,제로콜라-1", "주말 할인: -6,069원\n증정 이벤트: -25,000원"),
+                Arguments.of(31, "초코케이크-10", "평일 할인: -20,230원\n특별 할인: -1,000원\n증정 이벤트: -25,000원"),
+                Arguments.of(25, "초코케이크-10,제로콜라-1", "평일 할인: -20,230원\n특별 할인: -1,000원\n크리스마스 디데이 할인: -3,400원\n증정 이벤트: -25,000원")
         );
     }
 
     @ParameterizedTest
     @MethodSource("forDiscountTest")
-    void 적용된_이벤트가_일치합니다(int visitDay, String order, List<String> output) {
+    void 적용된_이벤트가_일치합니다(int visitDay, String order, String output) {
         // given
         LocalDate localDate = previewService.parseInputToVisitDate(visitDay);
         Order userOrder = previewService.parseInputToOrder(order);
+        int orderPrice = previewService.sumOrderPrice(userOrder);
 
         // when
-        List<Event> applicableEvents = previewService.getAllApplicableEvents(userOrder, localDate);
-        List<String> applicableEventToString = applicableEvents.stream()
-                .map(Event::showBenefitDetail)
-                .toList();
+        List<Event> applicableEvents = previewService.getAllApplicableEvents(orderPrice, userOrder, localDate);
+        String applicableEventToString = previewService.toEventDetails(applicableEvents);
 
         // then
-        assertEquals(output, applicableEventToString);
+        assertEquals(output,applicableEventToString);
 
     }
 
@@ -217,9 +218,10 @@ public class OwnTest {
         // given
         Order inputToOrder = previewService.parseInputToOrder(order);
         LocalDate localDate = previewService.parseInputToVisitDate(visitDay);
+        int orderPrice = previewService.sumOrderPrice(inputToOrder);
 
         // when
-        List<Event> applicableEvents = previewService.getAllApplicableEvents(inputToOrder,localDate);
+        List<Event> applicableEvents = previewService.getAllApplicableEvents(orderPrice, inputToOrder,localDate);
         int sumBenefitAmount = previewService.sumBenefitAmount(applicableEvents);
 
         // then
