@@ -60,10 +60,6 @@ public class PreviewService {
         return Badge.fromBenefitAmount(totalBenefit);
     }
 
-//    public String showBadgeName(Badge badge){
-//        return badge.getName();
-//    }
-
     public List<String> getOrderDetails(Order userOrder){
         return userOrder.detailToStrings();
     }
