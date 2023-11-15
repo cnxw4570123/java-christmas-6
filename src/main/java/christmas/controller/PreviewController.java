@@ -26,8 +26,8 @@ public class PreviewController {
     public void previewReceipt(){
         inputView.printGreeting();
         LocalDate visitDate = getValidatedVisitDate();
-        outputView.printPreviewStartMsg(visitDate.getMonthValue(), visitDate.getDayOfMonth());
         Order userOrder = getValidatedOrder();
+        outputView.printPreviewStartMsg(visitDate.getMonthValue(), visitDate.getDayOfMonth());
         printUserOrderPreview(userOrder, visitDate);
     }
 
