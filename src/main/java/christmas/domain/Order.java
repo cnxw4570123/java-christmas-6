@@ -4,9 +4,7 @@ import christmas.constant.Info;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,6 +18,7 @@ public class Order {
     private static final String ORDER_PATTERN = "^([가-힣]{3,8}-[0-9]{1,2})(,[가-힣]{3,8}-[0-9]{1,2})*$";
 
     private static final String ORDER_PRINTING_TEMPLATE = "%s %d개";
+    private static final EnumSet<MenuGroup> nonDrinkGroups = EnumSet.of(MenuGroup.APPETIZER, MenuGroup.MAIN_DISH, MenuGroup.DESSERT);
 
     public static Order fromDetails(String input) {
         Map<Menu, Integer> detail = validate(input);
@@ -61,7 +60,7 @@ public class Order {
                     String[] menuAndCount = eachOrder.split(MENU_COUNT_SEPARATOR);
                     Menu menu = Menu.findMenuByName(menuAndCount[0]);
                     int count = Integer.parseUnsignedInt(menuAndCount[1]);
-                    if (count <= 0) {
+                    if (count == 0) {
                         throw new IllegalArgumentException();
                     }
                     return MapEntry.entry(menu, count);
@@ -69,13 +68,15 @@ public class Order {
     }
 
     private static Map<Menu, Integer> validateDuplication(Stream<MapEntry<Menu, Integer>> mapEntryStream) {
-        Set<Menu> isDuplicated = new HashSet<>();
-
-        return mapEntryStream.peek(eachOrder -> {
-            if (!isDuplicated.add(eachOrder.getKey())) {
-                throw new IllegalArgumentException();
-            }
-        }).collect(Collectors.toUnmodifiableMap(MapEntry::getKey, MapEntry::getValue));
+        return mapEntryStream.collect(
+                Collectors.toUnmodifiableMap(
+                        MapEntry::getKey,
+                        MapEntry::getValue,
+                        (k, v) -> {
+                            throw new IllegalArgumentException();
+                        }
+                )
+        );
     }
 
     private static void validateExceedMaximumOrder(Map<Menu, Integer> details) {
@@ -94,8 +95,6 @@ public class Order {
     }
 
     private static boolean isDrinksOnly(Map<Menu, Integer> detailCandidate) {
-        EnumSet<MenuGroup> nonDrinkGroups = EnumSet.of(MenuGroup.APPETIZER, MenuGroup.MAIN_DISH, MenuGroup.DESSERT);
-
         return detailCandidate.keySet().stream()
                 .map(MenuGroup::checkMenuGroup)
                 .distinct()
