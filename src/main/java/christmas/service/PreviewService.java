@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import org.mockito.internal.matchers.Or;
 
 public class PreviewService {
 
@@ -65,5 +67,20 @@ public class PreviewService {
 
     public List<String> getOrderDetails(Order userOrder){
         return userOrder.detailToStrings();
+    }
+
+    public String getGiftDetail(List<Event> appliedEvents){
+        return appliedEvents.stream().
+                filter(event -> event instanceof Gift)
+                .findFirst()
+                .map(event -> ((Gift) event).showGiftDetail())
+                .orElse(Info.EMPTY);
+
+    }
+
+    public List<String> toEventDetail(List<Event> appliedEvents){
+        return appliedEvents.stream()
+                .map(Event::showBenefitDetail)
+                .toList();
     }
 }

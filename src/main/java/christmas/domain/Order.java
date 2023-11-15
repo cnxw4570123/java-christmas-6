@@ -101,7 +101,7 @@ public class Order {
 
     public List<String> detailToStrings(){
         return detail.entrySet().stream()
-                .map(entry -> String.format(ORDER_PRINTING_TEMPLATE, entry.getKey(), entry.getValue()))
+                .map(entry -> String.format(ORDER_PRINTING_TEMPLATE, entry.getKey().getMenuName(), entry.getValue()))
                 .toList();
     }
 

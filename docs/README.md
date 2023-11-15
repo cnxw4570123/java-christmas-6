@@ -66,12 +66,22 @@
 ##### 메서드
 
 - 메뉴 이름을 통해 메뉴 그룹을 찾는 메소드
-- signature : `public MenuGroup checkMenuGroup(Menu menu)`
+- signature : `public MenuGroup findMenuGroup(Menu menu)`
 - return
   - MenuGroup : 해당 메뉴가 속하는 MenuGroup
 - description
   - 메뉴 그룹을 돌면서 해당 메뉴 그룹에 전달받은 메뉴가 있는지 확인한다.
   - 해당 메뉴가 속한 그룹을 반환한다.
+
+- 메뉴 이름을 반환하는 메서드
+ - signature : `public String getMenuName`
+ - description
+   - 해당 메뉴의 이름을 반환한다.
+
+- 메뉴 가격을 반환하는 메서드
+  - signature : `public int getMenuPrice`
+  - description
+    - 해당 메뉴의 가격을 반환한다.
 
 
 ---
@@ -99,7 +109,7 @@
 ##### 메서드
 
 - 혜택 금액을 받아서 배지를 적용가능한지 확인하는 메서드
-  - signature : `public static Badge checkBadge(int benefit)`
+  - signature : `public static Badge fromBenefitAmount(int benefit)`
   - return
     - 혜택 금액에 해당하는 Badge
   - description
@@ -266,6 +276,12 @@ Event의 구현체
 
 - TERMS_OF_GIFT
   -12만원 이상일 경우 증정품 증정 
+
+- GIFT_COUNT
+  - 개수
+
+- GIFT_EVENT_MSG
+  - 증정 이벤트
 
 - MENU
   - 증정품으로 줄 메뉴
@@ -499,6 +515,20 @@ Event의 구현체
   - description
     - Order 객체의 detailToString() 메서드로 문자열 리스트를 반환받는다.
 
+- 증정품을 문자열로 반환하는 메서드
+  - signature : `public String getGiftDetail(List<Event> appliedEvents)`
+  - description
+    - Gift 객체가 존재하는지 확인하고 있으면 해당 객체의 getGiftDetail 메서드를 이용해 증정품 이름과 개수를 반환한다.
+    - 없으면 "없음"을 반환한다.
+
+- 적용된 모든 혜택을 문자열로 합쳐 반환하는 메서드
+  - signature : `public String toEventDetail(List<Event> appliedEvents)`
+  - description
+    - 적용된 이벤트가 없으면 Info.EMPTY를 반환한다.
+    - 이벤트 구현체들을 순회하면서 각 구현체의 `showBenefitDetail`메서드를 이용해 문자열로 바꾼다.
+    - 이를 "\n"로 연결해 문자열을 반환한다.
+    
+
 ---
 ### view
 
@@ -512,10 +542,10 @@ Event의 구현체
 - GREETING_MENT
   - "안녕하세요! 우테코 식당 %d월 이벤트 플래너입니다.\n"
 - INPUT_VISIT_DAY_MESSAGE
-  - "%d 중 식당 예상 방문 날짜는 언제인가요? (숫자만 입력해 주세요!)\n"
+  - "%d월 중 식당 예상 방문 날짜는 언제인가요? (숫자만 입력해 주세요!)\n"
 - INPUT_ORDER_MESSAGE
-
   - "주문하실 메뉴를 메뉴와 개수를 알려주세요. (e.g. 해산물파스타-2, 레드와인-1, 초코케이크-1)\n"
+
 ##### 메서드
 
 - 환영인사를 출력해주는 메소드
@@ -565,20 +595,45 @@ Event의 구현체
 
 ##### 메서드
 
+- 미리보기 시작을 알리는 메서드
+  - signature : `public void printPreviewStartMsg(int month, int day)`
+  - description
+    - 방문 날짜의 달과 일을 받아서 PREVIEW_START_MSG에 매핑한 후 출력한다.
+    
 - 주문 메뉴들을 출력하는 메서드
-
+  - signature : `public void printUserOrderMenus(List<String> orderDetails)`
+  - description
+    - 주문 메뉴와 개수로 이루어진 문자열 리스트들을 받아서 ORDER_MENU와 함께 출력한다.
+  
 - 할인 전 총 주문 금액을 출력하는 메서드
-
+  - signature : `public void printSummedOrderPrice(int totalPrice)`
+  - description
+    - 할인 전 총 주문 금액을 받아서 BEFORE_DISCOUNT와 함께 출력한다.
+    
 - 증정 메뉴를 출력하는 메서드
-
+  - signature : `public void printGiftInfo(String giftInfo)`
+  - description
+    - 적용된 혜택 내역들을 DISCOUNT_DETAIL과 함께 출력한다.
+    
 - 혜택 내역을 출력하는 메서드
-
+  - signature : `public void printAppliedEventDetails(String eventDetails)`
+  - description
+    -
 - 총 혜택 금액을 출력하는 메서드
-
+  - signature : `public void printTotalDiscountAmount(int totalDiscounts)`
+  - description
+    - 총 혜택 금액을 TOTAL_DISCOUNT와 함께 출력한다.
+    
 - 할인 후 예상 결제 금액을 출력하는 메서드
-
+  - signature : `public void printExpectedPayment(int afterDiscount)`
+  - description
+    - 총 주문 금액에서 할인 금액을 뺀 금액을 받아서 EXPECT_PAYMENT와 함께 출력한다.
+    
 - 이벤트 배지를 출력하는 메서드
-
+  - signature : `public void printEventBadge(int month, String badge)`
+  - description
+    - 현재 달과 이벤트 뱃지 이름을 받아서 EVENT_BADGE에 담아 출력한다.
+  
 - 에러를 출력하는 메서드
 - signature : `public void printErrorMsg(String errorMsg)`
 - description
